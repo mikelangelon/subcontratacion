@@ -1,0 +1,24 @@
+My notes:
+
+Use my docker account to push to docker hub:
+
+docker login --username=mikelangelon --password=$MYPASSWORD
+docker build --tag mikelangelon/test .
+docker push mikelangelon/test
+
+
+create secret
+kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=mikelangelon --docker-password=$MYPASSWORD --docker-email=mikelangelon@gmail.com
+
+change deployment to use that secret
+-->
+    spec:
+        imagePullSecrets:
+        - name : regcred
+        containers:
+        - image: mikelangelon/test
+            name: test
+
+And now, doing kubectl apply -f .
+
+Everything works!
