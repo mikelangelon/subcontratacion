@@ -2,10 +2,10 @@ FROM golang:alpine as builder
 RUN apk --update add --no-cache bash curl coreutils
 WORKDIR /app
 ADD . .
-RUN go build
+RUN go build -o coolapp
 
 FROM alpine as prod
 WORKDIR /app
-COPY --from=builder /app/app /app/app
+COPY --from=builder /app/coolapp /app/coolapp
 EXPOSE 8080
-CMD ["./app"]
+CMD ["./coolapp"]

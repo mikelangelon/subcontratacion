@@ -2,17 +2,26 @@ package main
 
 import (
 	"fmt"
+	"mikelangelon/m/v2/api/resource"
+	"mikelangelon/m/v2/api/rest"
+	"mikelangelon/m/v2/api/rest/operation"
 	"net/http"
+	"os"
+
+	"github.com/go-openapi/loads"
 )
 
 func main() {
 	fmt.Println("Starting testing server...")
-	http.HandleFunc("/", helloServer)
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		panic(err)
-	}
-}
 
-func helloServer(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello world!")
+	specs, err := loads.Analyzed(rest.SwaggerJSON, "")
+	if err != nil {
+		os.Exit(1)
+	}
+	api := operation.NewCoolappAPI(specs)
+
+	r := new(resource.Resource)
+	r.Register(api)
+
+	http.ListenAndServe(":8080", api.Serve(nil))
 }

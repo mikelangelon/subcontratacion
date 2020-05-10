@@ -1,1 +1,6 @@
-testapp
+coolapp
+vendor
+
+#swagger generated code
+api/rest
+api/model
