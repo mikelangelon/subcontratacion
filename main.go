@@ -1,36 +1,33 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"log"
 	"mikelangelon/m/v2/api/resource"
 	"mikelangelon/m/v2/api/rest"
 	"mikelangelon/m/v2/api/rest/operation"
+	"mikelangelon/m/v2/internal/pkg"
 	"net/http"
 	"os"
 
 	"github.com/go-openapi/loads"
-	"github.com/gomodule/redigo/redis"
 	"github.com/syllabix/swagserver"
 	"github.com/syllabix/swagserver/option"
 	"github.com/syllabix/swagserver/theme"
 )
 
 func main() {
+	var redisURL = flag.String("redisURL", "redis", "help message for flagname")
+	flag.Parse()
+
 	fmt.Println("Starting testing server...")
 
-	fmt.Println("Connect to redis...")
-	conn, err := redis.Dial("tcp", "redis:6379")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
+	fmt.Println("Connect to redis2...")
 
-	conn.Do("SET", "k1", 1)
-	n, _ := redis.Int(conn.Do("GET", "k1"))
-	fmt.Printf("%#v\n", n)
-	n, _ = redis.Int(conn.Do("INCR", "k1"))
-	fmt.Printf("%#v\n", n)
+	client := pkg.New(fmt.Sprintf("%s:6379", *redisURL))
+
+	client.SetPair("Something", "sooooomething")
+	fmt.Println(client.GetPair("Something"))
 
 	specs, err := loads.Analyzed(rest.SwaggerJSON, "")
 	if err != nil {

@@ -10,7 +10,7 @@ build:
 	$(GOBUILD) -o $(BINARY_NAME) -v
 
 run:
-	go run main.go
+	go run main.go -redisURL=localhost
 
 generateapi:
 	$(SWAGGER_GEN)
