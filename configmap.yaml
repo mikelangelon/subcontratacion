@@ -1,0 +1,13 @@
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: example-configmap 
+data:
+  # Configuration values can be set as key-value properties
+  redis_hostname: redis
+  redis_port: "6379"
+  
+  # Or set as complete file contents (even JSON!)
+  # keys: | 
+  #   redis.hostname=redis
+  #   redis.port=6379 

@@ -33,4 +33,7 @@ spec:
       containers:
         - image: mikelangelon/test
           name: test
+          envFrom:
+          - configMapRef:
+             name: example-configmap
           

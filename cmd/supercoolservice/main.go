@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"mikelangelon/m/v2/api/resource"
 	"mikelangelon/m/v2/api/rest"
@@ -17,17 +16,21 @@ import (
 )
 
 func main() {
-	var redisURL = flag.String("redisURL", "redis", "help message for flagname")
-	flag.Parse()
+	redisURI := goDotEnvVariable("redis_hostname", "localhost")
+	redisPort := goDotEnvVariable("redis_host", "6379")
 
 	fmt.Println("Starting testing server...")
 
-	fmt.Println("Connect to redis2...")
+	fmt.Println(fmt.Sprintf("connecting to redis with  %s:%s", redisURI, redisPort))
 
-	client := pkg.New(fmt.Sprintf("%s:6379", *redisURL))
+	client := pkg.New(fmt.Sprintf("%s:%s", redisURI, redisPort))
 
-	client.SetPair("Something", "sooooomething")
-	fmt.Println(client.GetPair("Something"))
+	err := client.SetPair("key", "testingValue")
+	if err != nil {
+		fmt.Println(err)
+	}
+	val, err := client.GetPair("key")
+	fmt.Println(fmt.Sprintf("val %s with err %v", val, err))
 
 	specs, err := loads.Analyzed(rest.SwaggerJSON, "")
 	if err != nil {
@@ -55,4 +58,17 @@ func main() {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Hello world")
+}
+
+// use godot package to load/read the .env file and
+// return the value of the key
+func goDotEnvVariable(key, defaultOption string) string {
+
+	value, exists := os.LookupEnv(key)
+
+	if exists {
+
+		return value
+	}
+	return defaultOption
 }

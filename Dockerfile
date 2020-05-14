@@ -2,7 +2,7 @@ FROM golang:alpine as builder
 RUN apk --update add --no-cache bash curl coreutils
 WORKDIR /app
 ADD . .
-RUN go build -o coolapp
+RUN go build -o coolapp cmd/supercoolservice/main.go
 
 FROM alpine as prod
 WORKDIR /app
