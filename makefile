@@ -21,6 +21,11 @@ dockerhub:
 	docker build --tag mikelangelon/test .
 	docker push mikelangelon/test
 
+cronjobdh:
+	cd cronjob; \
+    docker build --tag mikelangelon/cronjob .
+	docker push mikelangelon/cronjob
+
 kapply:
 	kubectl apply -f .
 
@@ -29,4 +34,6 @@ kdelete:
 
 generateapi:
 	$(SWAGGER_GEN)
+
+
 
