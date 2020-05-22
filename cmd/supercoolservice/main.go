@@ -41,6 +41,10 @@ func main() {
 	r := new(resource.Resource)
 	r.Register(api)
 
+	rA := new(resource.ResourceA)
+	rA.Input = map[string]string{}
+	rA.Register(api)
+
 	s := http.NewServeMux()
 	s.HandleFunc("/", handler)
 	swaggerAPI := api.Serve(nil)

@@ -9,6 +9,60 @@ schemes:
   - https
   
 paths:
+  /attachments:
+    get:
+      summary: List all the attachments
+      tags:
+        - attachments
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: offerId
+          type: string
+          description: Offer ID with attachments
+      responses:
+        200:
+          description: All attachments found for this search
+          schema:
+            $ref: "#/definitions/AttachmentMetaList"
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+
+    post:
+      summary: Attaches a new document
+      description: Optional extended description in Markdown.
+      tags:
+        - attachments
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: file
+          required: true
+          type: file
+          description: The file to attach
+        - in: formData
+          name: name
+          required: true
+          type: string
+          description: The name of the attachment
+        - in: formData
+          name: description
+          type: string
+          description: An optional description of the document
+        - in: formData
+          name: offerId
+          required: true
+          type: string
+          description: offerID to where the document is attached
+
+      responses:
+        200:
+          description: OK
+
   /users:
     get:
       summary: Returns a list of users.
@@ -22,6 +76,21 @@ paths:
             $ref: "#/definitions/Users"
           
 definitions:
+  AttachmentMetaList:
+    type: array
+    items:
+      $ref: '#/definitions/AttachmentMeta'
+
+  AttachmentMeta:
+    type: object
+    properties:
+      name: 
+        type: string
+      description:
+        type: string
+      offerId:
+        type: string
+
   User:
     properties:
       id:
