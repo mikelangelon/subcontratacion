@@ -33,6 +33,8 @@ kdelete:
 	kubectl delete -f .
 
 generateapi:
+	rm -rf /api/model
+	rm -rf /api/rest
 	$(SWAGGER_GEN)
 
 

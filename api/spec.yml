@@ -7,8 +7,304 @@ basePath: /v1
 schemes:
   - http
   - https
-  
+
 paths:
+  /companies/{companyId}:
+    get:
+      summary: Returns a company by ID.
+      tags:
+        - companies
+      parameters:
+        - in: path
+          name: companyId
+          required: true
+          type: string
+          description: The ID of the company to return.
+      responses:
+        200:
+          description: A Company object.
+          schema:
+            $ref: '#/definitions/Company'
+        400:
+          description: The specified company ID is invalid (e.g. is empty).
+        404:
+          description: A company with the specified ID was not found.
+        500:
+          description: Internal server error
+    put:
+      summary: Update a company by ID.
+      tags:
+        - companies
+      parameters:
+        - in: path
+          name: companyId
+          required: true
+          type: string
+          description: The ID of the company to return.
+        - in: body
+          name: company
+          description: The company to update.
+          schema:
+            $ref: '#/definitions/Company'
+      responses:
+        200:
+          description: A Company object.
+          schema:
+            $ref: '#/definitions/Company'
+        400:
+          description: The specified company ID is invalid (e.g. is empty).
+        404:
+          description: A company with the specified ID was not found.
+        500:
+          description: Internal server error
+  /companies:
+    post:
+      summary: Creates a new company.
+      tags:
+        - companies
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: company
+          description: The company to create.
+          schema:
+            $ref: '#/definitions/Company'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Company'
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+    get:
+      summary: List all companies
+      tags:
+        - companies
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: limit
+          type: integer
+          description: Only the limited amount of companies
+      responses:
+        200:
+          description: All companies found for this search
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Company"
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+  /contacts/{contactId}:
+    get:
+      summary: Gets a contact.
+      tags:
+        - contacts
+      parameters:
+        - in: path
+          name: contactId
+          required: true
+          type: string
+          description: The ID of the company to return.
+      responses:
+        200:
+          description: A Contact object.
+          schema:
+            $ref: '#/definitions/Contact'
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+    put:
+      summary: Updates a new contact.
+      tags:
+        - contacts
+      parameters:
+        - in: path
+          name: contactId
+          required: true
+          type: string
+          description: The ID of the company to return.
+        - in: body
+          name: contact
+          description: The contact to update.
+          schema:
+            $ref: '#/definitions/Contact'
+      responses:
+        200:
+          description: A Contact object.
+          schema:
+            $ref: '#/definitions/Contact'
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+  /contacts:
+    post:
+      summary: Creates a new contact.
+      tags:
+        - contacts
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: contact
+          description: The contact to create.
+          schema:
+            $ref: '#/definitions/Contact'
+      responses:
+        200:
+          description: A Contact object.
+          schema:
+            $ref: '#/definitions/Contact'
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+
+  /users:
+    post:
+      summary: Creates a new user.
+      tags:
+        - users
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: The user to create.
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+
+  /sessions:
+    post:
+      summary: Creates a new session.
+      tags:
+        - sessions
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: user to be logged
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+  /offers:
+    post:
+      summary: Creates a new offer.
+      tags:
+        - offers
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: offer
+          description: The offer to create.
+          schema:
+            $ref: '#/definitions/Offer'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Offer'
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+    get:
+      summary: List all the offers
+      tags:
+        - offers
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: last
+          type: integer
+        - in: query
+          name: budgetRequestId
+          type: string
+        - in: query
+          name: companyId
+          type: string
+      responses:
+        200:
+          description: All offers found for this search
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Offer"
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+  /budget-requests:
+    post:
+      summary: Creates a new budget request.
+      tags:
+        - budget-requests
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: budget-request
+          description: The company to create.
+          schema:
+            $ref: '#/definitions/BudgetRequest'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/BudgetRequest'
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+    get:
+      summary: List all the budget requests
+      tags:
+        - budget-requests
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: last
+          type: integer
+        - in: query
+          name: companyId
+          type: string
+      responses:
+        200:
+          description: All budget requests found for this search
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/BudgetRequest"
+        400:
+          description: Bad Request
+        500:
+          description: Internal server error
+
   /attachments:
     get:
       summary: List all the attachments
@@ -18,9 +314,14 @@ paths:
         - application/json
       parameters:
         - in: query
-          name: offerId
+          name: id
           type: string
-          description: Offer ID with attachments
+          description: ID with attachments
+        - in: query
+          name: type
+          type: string
+          enum: ['offer', 'budgetRequest']
+          description: ID with attachments
       responses:
         200:
           description: All attachments found for this search
@@ -54,27 +355,21 @@ paths:
           type: string
           description: An optional description of the document
         - in: formData
-          name: offerId
+          name: id
           required: true
           type: string
-          description: offerID to where the document is attached
-
+          description: ID to where the document is attached
+        - in: formData
+          name: type
+          required: true
+          type: string
+          enum: ['offer', 'budgetRequest']
+          description: Type
       responses:
         200:
           description: OK
 
-  /users:
-    get:
-      summary: Returns a list of users.
-      description: Optional extended description in Markdown.
-      produces:
-        - application/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/Users"
-          
+
 definitions:
   AttachmentMetaList:
     type: array
@@ -84,26 +379,149 @@ definitions:
   AttachmentMeta:
     type: object
     properties:
-      name: 
+      name:
         type: string
       description:
         type: string
       offerId:
         type: string
 
-  User:
+  BudgetRequests:
     properties:
       id:
-        type: integer
+        type: string
+      companyId:
+        type: string
       name:
         type: string
-    # Both properties are required
-    required:  
-      - id
+      material:
+        type: string
+      quantity:
+        type: integer
+      quantityDetail:
+        type: string
+      offerDeadline:
+        type: string
+        format: date
+      deadline:
+        type: string
+        format: date
+      deliveryConditions:
+        type: string
+      paymentConditions:
+        type: string
+      comments:
+        type: string
+      public:
+        type: boolean
+  Offer:
+    properties:
+      id:
+        type: string
+      budgetRequestId:
+        type: string
+      companyId:
+        type: string
+      description:
+        type: string
+    required:
+      - budgetRequestId
+      - companyId
+
+  User:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+      - email
+      - password
+
+  Contact:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      surname:
+        type: string
+      phone:
+        type: string
+      fax:
+        type: string
+      companyId:
+        type: string
+      email:
+        type: string
+    required:
       - name
-  Users:
-    type: array
-    items:
-      $ref: '#/definitions/User'
-  
-  
+      - surname
+      - phone
+      - companyId
+      - email
+
+  Company:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      street:
+        type: string
+      cp:
+        type: string
+      city:
+        type: string
+      cif:
+        type: string
+      web:
+        type: string
+      logo:
+        type: string
+        format: binary
+      fundationYear:
+        type: integer
+      quantity:
+        type: string
+        enum: ['1 - 100', '101 - 1000', '1001 - 10000', '> 10000']
+      employees:
+        type: string
+        enum: ['< 5', '5 - 19', '20 - 49', '50 - 99','50 - 500', ' > 500']
+      description:
+        type: string
+    required:
+      - name
+
+  BudgetRequest:
+    properties:
+      id:
+        type: string
+      companyId:
+        type: string
+      name:
+        type: string
+      material:
+        type: string
+      quantity:
+        type: integer
+      quantityDetails:
+        type: string
+      offerDeadline:
+        type: string
+        format: date
+      deadline:
+        type: string
+        format: date
+      deliveryConditions:
+        type: string
+      paymentConditions:
+        type: string
+      comments:
+        type: string
+      public:
+        type: boolean
+    required:
+      - name
+      - companyId
+      - quantity
