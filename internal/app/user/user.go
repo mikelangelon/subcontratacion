@@ -1,40 +1,45 @@
 package user
 
-import "errors"
+import (
+	"errors"
+)
 
-var errUserNotValid = errors.New("user not valid")
+var ErrUserNotValid = errors.New("user not valid")
 
 type User struct {
 	User     string
 	Password string
 }
 
-type userService struct {
-	redis Redis
+type UserService struct {
+	repo repo
 }
 
-func New(redis Redis) userService {
-	return userService{
-		redis: redis,
+type repo interface {
+	Save(user User) error
+	Exists(user User) (bool, error)
+}
+
+func New(repo repo) UserService {
+	return UserService{
+		repo: repo,
 	}
 }
 
-func (u userService) Save(user User) error {
-	return u.redis.SetPair(user.User, user.Password)
+func (u UserService) Register(user User) error {
+	return u.repo.Save(user)
 }
 
-func (u userService) Login(user User) error {
-	val, err := u.redis.GetPair(user.User)
+func (u UserService) Auth(username, password string) error {
+	val, err := u.repo.Exists(User{
+		User:     username,
+		Password: password,
+	})
 	if err != nil {
-		return errUserNotValid
+		return err
 	}
-	if val != user.Password {
-		return errUserNotValid
+	if !val {
+		return ErrUserNotValid
 	}
 	return nil
-}
-
-type Redis interface {
-	SetPair(key, value string) error
-	GetPair(key string) (string, error)
 }

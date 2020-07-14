@@ -1,104 +1,228 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"mikelangelon/m/v2/api/resource"
-	"mikelangelon/m/v2/api/rest"
-	"mikelangelon/m/v2/api/rest/operation"
-	"mikelangelon/m/v2/internal/app/attachmentrepo"
+	"html/template"
+	"mikelangelon/m/v2/api/web"
+	"mikelangelon/m/v2/internal/app/budgetrequest"
+	"mikelangelon/m/v2/internal/app/company"
 	"mikelangelon/m/v2/internal/app/user"
-	"mikelangelon/m/v2/internal/pkg"
-	"mikelangelon/m/v2/internal/pkg/dgraph"
-	"mikelangelon/m/v2/internal/pkg/minioclient"
+	"mikelangelon/m/v2/internal/pkg/db"
 	"net/http"
-	"os"
+	"time"
 
-	"github.com/go-openapi/loads"
-	"github.com/minio/minio-go/v6"
-	"github.com/syllabix/swagserver"
-	"github.com/syllabix/swagserver/option"
-	"github.com/syllabix/swagserver/theme"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 func main() {
+	db := setupMongo()
 
-	r := redis()
-	c := setupMinio()
-	setupDGraph()
+	services := setupServiceLayer(db)
 
-	// ###### API ######
-	server := api(c, r)
+	server := api(services)
 
 	fmt.Println("Listening in 8080...")
 	http.ListenAndServe(":8080", server)
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello world")
+type services struct {
+	User    user.UserService
+	Company company.CompanyService
 }
 
-// use godot package to load/read the .env file and
-// return the value of the key
-func goDotEnvVariable(key, defaultOption string) string {
+type dbRepos struct {
+	UserDB    db.UserRepo
+	CompanyDB db.CompanysRepo
+}
 
-	value, exists := os.LookupEnv(key)
-
-	if exists {
-		return value
+func setupServiceLayer(dbRepos dbRepos) services {
+	return services{
+		User:    user.New(dbRepos.UserDB),
+		Company: company.New(dbRepos.CompanyDB),
 	}
-	return defaultOption
 }
 
-func redis() pkg.RedisClient {
-	redisURI := goDotEnvVariable("redis_hostname", "localhost")
-	redisPort := goDotEnvVariable("redis_host", "6379")
-
-	fmt.Println(fmt.Sprintf("connecting to redis with  %s:%s", redisURI, redisPort))
-
-	client := pkg.New(fmt.Sprintf("%s:%s", redisURI, redisPort))
-
-	return client
+func setupMongo() dbRepos {
+	database := initMongoDB()
+	return dbRepos{
+		UserDB:    db.NewUserRepo(database),
+		CompanyDB: db.NewCompanyRepo(database),
+	}
 }
 
-func setupMinio() attachmentrepo.Store {
-	client, err := minio.New("localhost:9000", "minioadmin", "minioadmin", false)
+func initMongoDB() *mongo.Database {
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		panic(err)
 	}
-	r := minioclient.New(client)
-	err = r.Prepare()
+	err = client.Ping(ctx, readpref.Primary())
 	if err != nil {
 		panic(err)
 	}
-	return r
+	return client.Database("subcon")
 }
 
-func setupDGraph() {
-	dgraph.New()
-}
-
-func api(store attachmentrepo.Store, redis user.Redis) *http.ServeMux {
-	specs, err := loads.Analyzed(rest.SwaggerJSON, "")
-	if err != nil {
-		os.Exit(1)
+func api(services services) *http.ServeMux {
+	// #### Define resources ####
+	budgetService := budgetrequest.New()
+	homeR := web.HomeResource{
+		CompanyService: services.Company,
+		BudgetService:  budgetService,
 	}
-	api := operation.NewCoolappAPI(specs)
+	// companyR := web.CompanyResource{
+	// 	CompanyService: companyService,
+	// 	OkCall:         homeR.Home,
+	// }
+	registrationR := web.RegistrationResource{
+		CompanyService: services.Company,
+		UserService:    services.User,
+		OkCall:         homeR.Home,
+	}
+	budgetRequestR := web.BudgetRequestResource{
+		BudgetService: budgetService,
+		OkCall:        homeR.Home,
+	}
 
-	resource.Register(api, resource.Dependencies{
-		Store: store,
-		Redis: redis,
-	})
+	loginR := web.LoginResource{
+		UserService: services.User,
+		OkCall:      homeR.Home,
+	}
 
+	profileR := web.ProfileResource{}
+	// #### Define paths ####
 	s := http.NewServeMux()
-	s.HandleFunc("/", handler)
-	swaggerAPI := api.Serve(nil)
-	s.Handle("/v1/", swaggerAPI)
-	s.Handle("/swagger.json", swaggerAPI)
+	s.HandleFunc("/", homeR.Home)
+	s.HandleFunc("/logout", loginR.Logout)
+	s.HandleFunc("/login", loginR.Login)
+	s.HandleFunc("/secret", serveFWithAuth(serveStatic))
+	s.HandleFunc("/login-form", func(writer http.ResponseWriter, request *http.Request) {
+		loginR.LoginForm(writer, request, nil)
+	})
+	s.HandleFunc("/register-form", serveRegisterForm)
+	s.HandleFunc("/budget-request-form", serveBudgetRequestForm)
+	s.HandleFunc("/budget-request-view", budgetRequestR.View)
+	s.HandleFunc("/budget-request-search", budgetRequestR.Search)
+	s.HandleFunc("/offer-form", serveOfferForm)
+	s.HandleFunc("/register", registrationR.Register)
+	s.HandleFunc("/budgetrequest", budgetRequestR.Create)
+	s.HandleFunc("/offer", budgetRequestR.Create)
+	s.HandleFunc("/profile", profileR.Profile)
 
-	s.Handle("/internal/v1/", swagserver.NewHandler(
-		option.Path("/internal/v1"),
-		option.SwaggerSpecURL("/swagger.json"),
-		option.Theme(theme.Muted),
-	))
+	s.HandleFunc("/ayuda", serveHelp)
+	s.HandleFunc("/contacto", serveContact)
+
+	// #### Define static resources ####
+	fs := http.FileServer(http.Dir("web/assets/"))
+	s.Handle("/static/", http.StripPrefix("/static/", fs))
+	s.HandleFunc("/home", homeR.Home)
 	return s
+}
+
+type serveFunc func(http.ResponseWriter, *http.Request)
+
+func serveFWithAuth(f serveFunc) serveFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, valid := web.LoginResource{}.Auth(w, r)
+		if !valid {
+			serveRegisterForm(w, r)
+			return
+		}
+		http.Redirect(w, r, "/home", http.StatusFound)
+	}
+}
+func serveStatic(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("web/example.html")
+	if err != nil {
+		fmt.Println(err)
+	}
+	items := struct {
+		Country string
+		City    string
+	}{
+		Country: "Australia",
+		City:    "Paris",
+	}
+	t.Execute(w, items)
+}
+
+func serveRegisterForm(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles(
+		"web/template/simple-layout.html",
+		"web/template/topmenu.html",
+		"web/content/registration-form.html")
+	if err != nil {
+		fmt.Println(err)
+	}
+	t.Execute(w, nil)
+}
+
+func serveBudgetRequestForm(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles(
+		"web/template/layout.html",
+		"web/template/topmenu.html",
+		"web/template/leftmenu.html",
+		"web/template/banner.html",
+		"web/content/budgetrequest-form.html")
+	if err != nil {
+		fmt.Println(err)
+	}
+	t.Execute(w, nil)
+}
+
+func serveBudgetRequestSearch(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles(
+		"web/template/layout.html",
+		"web/template/topmenu.html",
+		"web/template/leftmenu.html",
+		"web/template/banner.html",
+		"web/content/budgetrequest-search.html")
+	if err != nil {
+		fmt.Println(err)
+	}
+	t.Execute(w, nil)
+}
+
+func serveHelp(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles(
+		"web/template/layout.html",
+		"web/template/topmenu.html",
+		"web/template/leftmenu.html",
+		"web/template/banner.html",
+		"web/content/help.html")
+	if err != nil {
+		fmt.Println(err)
+	}
+	t.Execute(w, nil)
+}
+
+func serveContact(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles(
+		"web/template/layout.html",
+		"web/template/topmenu.html",
+		"web/template/leftmenu.html",
+		"web/template/banner.html",
+		"web/content/contact.html")
+	if err != nil {
+		fmt.Println(err)
+	}
+	t.Execute(w, nil)
+}
+
+func serveOfferForm(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("web/offerform.html")
+	if err != nil {
+		fmt.Println(err)
+	}
+	t.Execute(w, nil)
+}
+
+func basicFiles(content string) []string {
+	return []string{
+		"web/template/topmenu.html",
+		content,
+	}
 }

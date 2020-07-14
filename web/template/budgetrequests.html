@@ -1,0 +1,49 @@
+{{ define "budget-requests" }}
+<div class="col-xs-12 col-lg-10">
+    <div class="panel panel-default panel-no-border new-manufacturingmethod-request-teaser-wrapper">
+        <div class="panel-heading">
+            <h3 class="panel-title">Solicitudes de presupuesto</h3>
+        </div>
+
+        <div class="panel-body gradient-border">
+            <div class="row">
+                {{range .Offers}}
+                    <div class="col-md-6 new-manufacturingmethod-request-teaser">
+                        <div class="row">
+                            <div class="col-xs-9">
+                                <strong>{{.Name}}</strong>
+                                <br>
+                                <small>{{.Quantity}}</small>
+                                <p style="margin-top: 10px;">
+                                    <span class="label label-subcon"><i class="fa fa-cogs"
+                                                                        title="{{.Description}}"></i> {{.Description}}</span>
+                                    <br>
+                                </p>
+                            </div>
+                            <div class="col-xs-3">
+                                <div class="thumbnail-subcon">
+                                    <div class="icon-offers">
+                                                    <span class="fa-stack fa-lg" style="top: -2.5px; left: 2.5px;">
+                                                        <i class="fa fa-file fa-1x fa-stack-1x" style="color: #fff;"
+                                                           aria-hidden="true"></i>
+                                                        <i class="fa fa-file-o fa-1x fa-stack-1x"
+                                                           aria-hidden="true"></i>
+
+                                                        <i class="fa fa-file fa-1x fa-stack-1x"
+                                                           style="color: #fff; left: -6px; top: 6px;"
+                                                           aria-hidden="true"></i>
+                                                        <i class="fa fa-file-o fa-1x fa-stack-1x"
+                                                           style="left: -6px; top: 6px;" aria-hidden="true"></i>
+                                                    </span>
+                                    </div>
+                                </div>
+                                <div class="caption-subcon">
+                                    {{.AmountOffers}} Ofertas
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {{end}}
+            </div>
+        </div>
+{{ end }}

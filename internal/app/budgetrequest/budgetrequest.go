@@ -1,20 +1,19 @@
 package budgetrequest
 
-import (
-	"time"
-)
+import "time"
 
 type BudgetRequest struct {
 	ID                 string
-	Comments           string
-	CompanyID          string
-	DeliveryConditions string
-	Material           string
 	Name               string
-	Deadline           time.Time
-	OfferDeadline      time.Time
-	PaymentConditions  string
-	Public             bool
+	Material           string
+	Treatments         []string
 	Quantity           int64
 	QuantityDetail     string
+	Deadline           time.Time
+	OfferDeadline      time.Time
+	DeliveryConditions string
+	PaymentConditions  string
+	Comments           string
+	CompanyID          string
+	Public             bool
 }

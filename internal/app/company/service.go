@@ -1,15 +1,13 @@
 package company
 
-type service struct {
+type CompanyService struct {
 	repo         Repo
 	repoContacts RepoContacts
 }
 
-func New() *service {
-	return &service{
-		repo: &inMemoryRepo{
-			repo: map[string]*Company{},
-		},
+func New(repo Repo) CompanyService {
+	return CompanyService{
+		repo: repo,
 		repoContacts: &inMemoryRepoContacts{
 			map[string]*Contact{},
 		},
@@ -17,9 +15,10 @@ func New() *service {
 }
 
 type Repo interface {
-	Create(company *Company) error
-	Update(company *Company) error
-	Get(companyId string) (*Company, error)
+	Save(company Company) error
+	Update(company Company) error
+	Get(id string) (*Company, error)
+	Latests(limit int64) ([]*Company, error)
 }
 
 type RepoContacts interface {
@@ -29,29 +28,33 @@ type RepoContacts interface {
 	GetAllFor(companyID string) ([]*Contact, error)
 }
 
-func (s *service) CreateCompany(company *Company) error {
-	return s.repo.Create(company)
+func (s CompanyService) CreateCompany(company Company) error {
+	return s.repo.Save(company)
 }
 
-func (s *service) UpdateCompany(company *Company) error {
-	return s.repo.Create(company)
+func (s CompanyService) UpdateCompany(company Company) error {
+	return s.repo.Update(company)
 }
-func (s *service) GetCompany(companyId string) (*Company, error) {
+func (s CompanyService) GetCompany(companyId string) (*Company, error) {
 	return s.repo.Get(companyId)
 }
 
-func (s *service) CreateContact(contact *Contact) error {
+func (s CompanyService) GetLastCompanies() ([]*Company, error) {
+	return s.repo.Latests(4)
+}
+
+func (s CompanyService) CreateContact(contact *Contact) error {
 	return s.repoContacts.Create(contact)
 }
 
-func (s *service) UpdateContact(contact *Contact) error {
+func (s CompanyService) UpdateContact(contact *Contact) error {
 	return s.repoContacts.Create(contact)
 }
 
-func (s *service) GetContact(contactId string) (*Contact, error) {
+func (s CompanyService) GetContact(contactId string) (*Contact, error) {
 	return s.repoContacts.Get(contactId)
 }
 
-func (s *service) GetAllContactsFor(companyId string) ([]*Contact, error) {
+func (s CompanyService) GetAllContactsFor(companyId string) ([]*Contact, error) {
 	return s.repoContacts.GetAllFor(companyId)
 }

@@ -1,0 +1,19 @@
+{{ define "content" }}
+    <table style="width:100%">
+        <caption>Presupuestos</caption>
+        <tr>
+            <th>Descripcion</th>
+            <th>Material</th>
+            <th>Cantidad</th>
+            <th>Empresa</th>
+        </tr>
+        {{range .AllBudgets}}
+            <tr>
+                <td> <a href="/budget-request-view?id={{.ID}}">{{.Name}}</a></td>
+                <td>{{.Material}}</td>
+                <td>{{.Quantity}}</td>
+                <td>{{.Company.Name}}</td>
+            </tr>
+        {{end}}
+    </table>
+{{ end }}

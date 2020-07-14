@@ -3,6 +3,8 @@ package company
 import (
 	"errors"
 	"fmt"
+
+	"github.com/sirupsen/logrus"
 )
 
 type inMemoryRepo struct {
@@ -10,6 +12,7 @@ type inMemoryRepo struct {
 }
 
 func (i *inMemoryRepo) Create(company *Company) error {
+	logrus.Info("repo save company")
 	company.ID = fmt.Sprintf("%d", len(i.repo)+1)
 	i.repo[company.ID] = company
 	return nil
@@ -30,4 +33,13 @@ func (i *inMemoryRepo) Get(companyId string) (*Company, error) {
 		return nil, errors.New("not found")
 	}
 	return val, nil
+}
+
+func (i *inMemoryRepo) GetLastCompanies() ([]*Company, error) {
+	logrus.Info("repo GetLastCompanies")
+	var companies []*Company
+	for _, v := range i.repo {
+		companies = append(companies, v)
+	}
+	return companies, nil
 }

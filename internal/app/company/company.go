@@ -12,5 +12,7 @@ type Company struct {
 	Quantity      string
 	Street        string
 	Web           string
+	Logo          []byte
 	Contact       Contact
+	Email         string
 }

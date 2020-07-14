@@ -4,8 +4,16 @@ type service struct {
 	repo inMemoryRepo
 }
 
-func (s *service) Create(budgetRequest *Offer) error {
-	return s.Create(budgetRequest)
+func New() *service {
+	return &service{
+		repo: inMemoryRepo{
+			repo: map[string]*Offer{},
+		},
+	}
+}
+
+func (s *service) Create(offer *Offer) error {
+	return s.Create(offer)
 }
 
 func (s *service) GetAll() ([]*Offer, error) {

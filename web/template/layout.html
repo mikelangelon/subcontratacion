@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Subcon</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="static/css/main.css"/>
+    <link rel="stylesheet" href="static/css/page.css"/>
+</head>
+<body>
+
+<!-- Header -->
+<header id="header">
+    {{ template "topmenu" . }}
+</header>
+
+<section id="banner">
+    {{ template "banner" . }}
+</section>
+<!-- Content -->
+<div class ="row">
+    <div class="col-xs-12 col-lg-2">
+        {{ template "leftmenu" . }}
+    </div>
+    <div class="col-xs-12 col-lg-10">
+        {{ template "content" . }}
+    </div>
+</div>
+
+
+</body>
+</html>

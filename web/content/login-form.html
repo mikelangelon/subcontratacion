@@ -1,0 +1,48 @@
+{{ define "content" }}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">Login</div>
+
+                {{if  .Message}}
+                    <div class="isa_error">
+                        <i class="fa fa-times-circle"></i>
+                        {{ .Message}}
+                    </div>
+                {{end}}
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form" method="POST" action="/login" enctype="multipart/form-data">
+                        <fieldset style="margin-top: 15px;">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-4 control-label">Usuario</label>
+
+                                <div class="col-sm-6">
+                                    <input id="name" type="text" class="form-control" name="user" value="" required="">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="street" class="col-sm-4 control-label">Contrasenya</label>
+
+                                <div class="col-sm-6">
+                                    <input id="street" type="password" class="form-control" name="password" value="" required="">
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-6 col-sm-offset-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        Login                                    </button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

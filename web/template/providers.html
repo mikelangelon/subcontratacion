@@ -1,0 +1,33 @@
+{{ define "providers" }}
+<div class="panel panel-default panel-no-border new-users-teaser-wrapper">
+    <div class="panel-heading">
+        <h3 class="panel-title">Últimos proveedores registrados</h3>
+    </div>
+
+    <div class="panel-body gradient-border">
+        <div class="row">
+            {{range .LastProviders}}
+                <div class="col-md-6 new-users-teaser">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <div class="thumbnail-subcon">
+                                <i class="fa fa-industry"></i>
+                            </div>
+                        </div>
+                        <div class="col-xs-9">
+                            <strong>{{.Name}}</strong>
+                            <p style="margin-top: 10px;">
+                                <strong>Localidad</strong>: {{.City}}
+                                <br><strong>Página web</strong>:
+                                <a href="http://www.vcu.company" target="_blank">{{.Web}}</a>
+                                <br>
+                                <strong>Número de empleados</strong>: {{.Employees}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{ end }}

@@ -1,0 +1,32 @@
+{{ define "leftmenu" }}
+<ul class="link-list" style="margin-top: 20px;">
+    <li>
+        <a class="btn btn-default btn-block btn-subcon btn-wrap-text" href="https://subcon.es/whatissubcon" role="button">¿Qué es Subcon?</a>
+    </li>
+    <li>
+        <a class="btn btn-default btn-block btn-subcon btn-wrap-text" href="https://subcon.es/function#funciona" role="button">¿Cómo funciona?</a>
+    </li>
+    <li>
+        <a class="btn btn-default btn-block btn-subcon btn-wrap-text" href="https://subcon.es/function#utalizar" role="button">¿Por qué utilizar?</a>
+    </li>
+</ul>
+<div style="border: 1px solid #ddd; border-radius: 4px; padding: 12px;">
+    <h3 style="margin-bottom: 15px; font-weight: bold;" class="panel-title">Usuarios activos</h3>
+    <div class="usercounter">
+        <div class="bar">
+            <div class="usercount usercount-purchaser" style="bottom: 70.751445086705%; height: 29.248554913295%">
+                <span class="sr-only">29.248554913295% Compradores</span>
+            </div>
+            <div class="usercount usercount-supplier" style="bottom: 21.965317919075%; height: 48.78612716763%">
+                <span class="sr-only">48.78612716763% Proveedores</span>
+            </div>
+            <div class="usercount usercount-combi" style="height: 21.965317919075%">
+                <span class="sr-only">21.965317919075% Cuenta combinada</span>
+            </div>
+        </div>
+        <span class="usercount-label" style="bottom: calc(100% - 40px);">253<br>Compradores</span>
+        <span class="usercount-label" style="bottom: calc(70.751445086705% - 40px);">422<br>Proveedores</span>
+        <span class="usercount-label" style="bottom: calc(21.965317919075% - 62px);">190<br>Cuenta combinada</span>
+    </div>
+</div>
+{{end}}

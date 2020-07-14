@@ -7,5 +7,6 @@ RUN go build -o coolapp cmd/supercoolservice/main.go
 FROM alpine as prod
 WORKDIR /app
 COPY --from=builder /app/coolapp /app/coolapp
+COPY web /app/web
 EXPOSE 8080
 CMD ["./coolapp"]

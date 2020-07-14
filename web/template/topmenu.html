@@ -1,0 +1,18 @@
+{{ define "topmenu" }}
+    <div class="inner">
+        <a href="../index.html" class="logo">Subcontratacion</a>
+        <nav id="nav">
+            {{if not .Profile}}
+                <a href="/login-form">Login</a>
+                <a href="/register-form">Registrar</a>
+            {{else}}
+                <a href="/profile">Mi Perfil {{.Profile.Username}}</a>
+                <a href="/logout">Logout</a>
+                <a href="/budget-request-form">Crear presupuesto</a>
+            {{end}}
+            <a href="/">Inicio</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/ayuda">Ayuda</a>
+        </nav>
+    </div>
+{{ end }}

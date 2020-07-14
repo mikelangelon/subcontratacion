@@ -25,6 +25,12 @@ cronjobdh:
 	cd cronjob; \
     docker build --tag mikelangelon/cronjob .
 	docker push mikelangelon/cronjob
+docker:
+	docker build --tag mikelangelon/test .
+	docker container run -p 8080:8080 -d --name subcon mikelangelon/test
+dockerrm:
+	docker container stop subcon
+	docker container rm subcon
 
 kapply:
 	kubectl apply -f .
@@ -36,6 +42,13 @@ generateapi:
 	rm -rf /api/model
 	rm -rf /api/rest
 	$(SWAGGER_GEN)
+
+dev.start:
+	docker-compose up --detach --no-recreate
+
+dev.rm:
+	docker-compose down
+
 
 
 
