@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Subcon</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="static/css/main.css"/>
+    <link rel="stylesheet" href="static/css/page.css"/>
+</head>
+<body>
+
+<!-- Header -->
+<header id="header">
+    <div class="inner">
+        <a href="index.html" class="logo">Subcontratacion</a>
+        <nav id="nav">
+            <a href="/Login">Login</a>
+            <a href="/register-form">Registrar</a>
+            <a href="/">Inicio</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/ayuda">Ayuda</a>
+        </nav>
+    </div>
+</header>
+<a href="#menu" class="navPanelToggle"><span class="fa fa-bars"></span></a>
+
+<!-- Banner -->
+<section id="banner">
+    <div class="inner">
+        <h1>Subcontratacion<br/>
+            <span>blah blah blah</span></h1>
+        <ul class="actions">
+            <li><a href="#" class="button alt">Pulsa aqui</a></li>
+        </ul>
+    </div>
+</section>
+
+<section id="one">
+    <div class="col-xs-12 col-lg-10">
+        <div class="panel panel-default panel-no-border new-manufacturingmethod-request-teaser-wrapper">
+            <div class="panel-heading">
+                <h3 class="panel-title">Solicitudes de presupuesto</h3>
+            </div>
+
+            <div class="panel-body gradient-border">
+                <div class="row">
+                    {{range .Offers}}
+                        <div class="col-md-6 new-manufacturingmethod-request-teaser">
+                            <div class="row">
+                                <div class="col-xs-9">
+                                    <strong>{{.Name}}</strong>
+                                    <br>
+                                    <small>{{.Quantity}}</small>
+                                    <p style="margin-top: 10px;">
+                                    <span class="label label-subcon"><i class="fa fa-cogs"
+                                                                        title="{{.Description}}"></i> {{.Description}}</span>
+                                        <br>
+                                    </p>
+                                </div>
+                                <div class="col-xs-3">
+                                    <div class="thumbnail-subcon">
+                                        <div class="icon-offers">
+                                                    <span class="fa-stack fa-lg" style="top: -2.5px; left: 2.5px;">
+                                                        <i class="fa fa-file fa-1x fa-stack-1x" style="color: #fff;"
+                                                           aria-hidden="true"></i>
+                                                        <i class="fa fa-file-o fa-1x fa-stack-1x"
+                                                           aria-hidden="true"></i>
+
+                                                        <i class="fa fa-file fa-1x fa-stack-1x"
+                                                           style="color: #fff; left: -6px; top: 6px;"
+                                                           aria-hidden="true"></i>
+                                                        <i class="fa fa-file-o fa-1x fa-stack-1x"
+                                                           style="left: -6px; top: 6px;" aria-hidden="true"></i>
+                                                    </span>
+                                        </div>
+                                    </div>
+                                    <div class="caption-subcon">
+                                        {{.AmountOffers}} Ofertas
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default panel-no-border new-users-teaser-wrapper">
+            <div class="panel-heading">
+                <h3 class="panel-title">Últimos proveedores registrados</h3>
+            </div>
+
+            <div class="panel-body gradient-border">
+                <div class="row">
+                    {{range .LastProviders}}
+                        <div class="col-md-6 new-users-teaser">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <div class="thumbnail-subcon">
+                                        <i class="fa fa-industry"></i>
+                                    </div>
+                                </div>
+                                <div class="col-xs-9">
+                                    <strong>{{.Name}}</strong>
+                                    <p style="margin-top: 10px;">
+                                        <strong>Localidad</strong>: {{.City}}
+                                        <br><strong>Página web</strong>:
+                                        <a href="http://www.vcu.company" target="_blank">{{.Web}}</a>
+                                        <br>
+                                        <strong>Número de empleados</strong>: {{.Employees}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Three -->
+<section id="three">
+
+</section>
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/skel.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>
